@@ -13,14 +13,14 @@ import Dialog from 'react-toolbox/lib/dialog';
 const TooltipCell = Tooltip(TableCell);
 
 const data = [
-  { id: 1, name: 'Авапы', calories: 305, fat: 3.7, sodium: 413, calcium: '3%', iron: '8%' },
-  { id: 2, name: 'ыапрыапр', calories: 452, fat: 25.0, sodium: 326, calcium: '2%', iron: '22%' },
-  { id: 3, name: 'йукейуке', calories: 262, fat: 16.0, sodium: 337, calcium: '6%', iron: '7%' },
-  { id: 4, name: 'фвапфвап', calories: 159, fat: 6.0, sodium: 87, calcium: '14%', iron: '1%' },
-  { id: 5, name: 'плдполд', calories: 356, fat: 16.0, sodium: 327, calcium: '7%', iron: '16%' },
-  { id: 6, name: 'уенге уенгуег', calories: 237, fat: 9.0, sodium: 129, calcium: '8%', iron: '1%' },
-  { id: 7, name: 'ароларол', calories: 375, fat: 0.0, sodium: 50, calcium: '0%', iron: '0%' },
-  { id: 8, name: 'чмитчмтичми', calories: 518, fat: 26.0, sodium: 54, calcium: '12%', iron: '6%' }
+  { id: 1, name: 'Авапы', calories: 305, fat: 3.7, sodium: 413, calcium: '3%', iron: '8%', dialog: 'Test' },
+  { id: 2, name: 'ыапрыапр', calories: 452, fat: 25.0, sodium: 326, calcium: '2%', iron: '22%', dialog: 'Test' },
+  { id: 3, name: 'йукейуке', calories: 262, fat: 16.0, sodium: 337, calcium: '6%', iron: '7%', dialog: 'Test' },
+  { id: 4, name: 'фвапфвап', calories: 159, fat: 6.0, sodium: 87, calcium: '14%', iron: '1%', dialog: 'Test' },
+  { id: 5, name: 'плдполд', calories: 356, fat: 16.0, sodium: 327, calcium: '7%', iron: '16%', dialog: 'Test' },
+  { id: 6, name: 'уенге уенгуег', calories: 237, fat: 9.0, sodium: 129, calcium: '8%', iron: '1%', dialog: 'Test' },
+  { id: 7, name: 'ароларол', calories: 375, fat: 0.0, sodium: 50, calcium: '0%', iron: '0%', dialog: 'Test' },
+  { id: 8, name: 'чмитчмтичми', calories: 518, fat: 26.0, sodium: 54, calcium: '12%', iron: '6%', dialog: 'Test' }
 ];
 
 const sortByCaloriesAsc = (a, b) => {
@@ -43,7 +43,8 @@ export default class Step2 extends Component {
     this.state = {
       selected: [],
       sorted: 'asc',
-      active: false
+      active: false,
+      dialog: ''
     };
   }
 
@@ -63,8 +64,10 @@ export default class Step2 extends Component {
     this.setState({ sorted: nextSorting });
   };
 
-  handleToggle = () => {
+  handleToggle = dialog => {
+    console.log(dialog);
     this.setState({ active: !this.state.active });
+    this.setState({ dialog: dialog });
   };
 
   actions = [{ label: 'Закрыть', onClick: this.handleToggle }];
@@ -83,7 +86,7 @@ export default class Step2 extends Component {
             <TableCell numeric>Sodium (mg)</TableCell>
             <TableCell numeric>Calcium (%)</TableCell>
             <TableCell numeric>Iron (%)</TableCell>
-            <TableCell />
+            <TableCell>Test</TableCell>
           </TableHead>
           {sortedData.map((item, idx) => (
             <TableRow key={idx} selected={this.state.selected.indexOf(item.id) !== -1}>
@@ -93,7 +96,9 @@ export default class Step2 extends Component {
               <TableCell numeric>{item.sodium}</TableCell>
               <TableCell numeric>{item.calcium}</TableCell>
               <TableCell numeric>{item.iron}</TableCell>
-              <TableCell><Button label="Подробнее" onClick={this.handleToggle} /></TableCell>
+              <TableCell>
+                <Button label="Подробнее" onClick={() => this.handleToggle(item.dialog + item.id)} />
+              </TableCell>
             </TableRow>
           ))}
         </Table>
@@ -104,7 +109,7 @@ export default class Step2 extends Component {
           onEscKeyDown={this.handleToggle}
           onOverlayClick={this.handleToggle}
           title="My awesome dialog">
-          <p>Here you can add arbitrary content. Components like Pickers are using dialogs now.</p>
+          <p>{this.state.dialog}</p>
         </Dialog>
         <br />
         <Navigation>
