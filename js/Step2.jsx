@@ -8,40 +8,30 @@ import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table';
 import Tooltip from 'react-toolbox/lib/tooltip';
 import FontIcon from 'react-toolbox/lib/font_icon';
 
+import Dialog from 'react-toolbox/lib/dialog';
+
 const TooltipCell = Tooltip(TableCell);
 
-const UserModel = {
-  name: { type: String },
-  twitter: { type: String },
-  birthdate: {
-    type: Date,
-    title: 'Date of Birth'
-  },
-  cats: { type: Number },
-  dogs: { type: Number },
-  active: { type: Boolean }
-};
-
 const data = [
-  { name: 'Cupcake', calories: 305, fat: 3.7, sodium: 413, calcium: '3%', iron: '8%' },
-  { name: 'Donut', calories: 452, fat: 25.0, sodium: 326, calcium: '2%', iron: '22%' },
-  { name: 'Eclair', calories: 262, fat: 16.0, sodium: 337, calcium: '6%', iron: '7%' },
-  { name: 'Frozen yogurt', calories: 159, fat: 6.0, sodium: 87, calcium: '14%', iron: '1%' },
-  { name: 'Gingerbread', calories: 356, fat: 16.0, sodium: 327, calcium: '7%', iron: '16%' },
-  { name: 'Ice cream sandwich', calories: 237, fat: 9.0, sodium: 129, calcium: '8%', iron: '1%' },
-  { name: 'Jelly bean', calories: 375, fat: 0.0, sodium: 50, calcium: '0%', iron: '0%' },
-  { name: 'KitKat', calories: 518, fat: 26.0, sodium: 54, calcium: '12%', iron: '6%' }
+  { id: 1, name: 'Авапы', calories: 305, fat: 3.7, sodium: 413, calcium: '3%', iron: '8%' },
+  { id: 2, name: 'ыапрыапр', calories: 452, fat: 25.0, sodium: 326, calcium: '2%', iron: '22%' },
+  { id: 3, name: 'йукейуке', calories: 262, fat: 16.0, sodium: 337, calcium: '6%', iron: '7%' },
+  { id: 4, name: 'фвапфвап', calories: 159, fat: 6.0, sodium: 87, calcium: '14%', iron: '1%' },
+  { id: 5, name: 'плдполд', calories: 356, fat: 16.0, sodium: 327, calcium: '7%', iron: '16%' },
+  { id: 6, name: 'уенге уенгуег', calories: 237, fat: 9.0, sodium: 129, calcium: '8%', iron: '1%' },
+  { id: 7, name: 'ароларол', calories: 375, fat: 0.0, sodium: 50, calcium: '0%', iron: '0%' },
+  { id: 8, name: 'чмитчмтичми', calories: 518, fat: 26.0, sodium: 54, calcium: '12%', iron: '6%' }
 ];
 
 const sortByCaloriesAsc = (a, b) => {
-  if (a.calories < b.calories) return -1;
-  if (a.calories > b.calories) return 1;
+  if (a.name < b.name) return -1;
+  if (a.name > b.name) return 1;
   return 0;
 };
 
 const sortByCaloriesDesc = (a, b) => {
-  if (a.calories > b.calories) return -1;
-  if (a.calories < b.calories) return 1;
+  if (a.name > b.name) return -1;
+  if (a.name < b.name) return 1;
   return 0;
 };
 
@@ -51,8 +41,9 @@ export default class Step2 extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selected: ['Donut'],
-      sorted: 'asc'
+      selected: [],
+      sorted: 'asc',
+      active: false
     };
   }
 
@@ -63,7 +54,7 @@ export default class Step2 extends Component {
 
   handleRowSelect = selected => {
     const sortedData = this.getSortedData();
-    this.setState({ selected: selected.map(item => sortedData[item].name) });
+    this.setState({ selected: selected.map(item => sortedData[item].id) });
   };
 
   handleSortClick = () => {
@@ -72,38 +63,59 @@ export default class Step2 extends Component {
     this.setState({ sorted: nextSorting });
   };
 
+  handleToggle = () => {
+    this.setState({ active: !this.state.active });
+  };
+
+  actions = [{ label: 'Закрыть', onClick: this.handleToggle }];
+
   render() {
     const { common } = this.props;
     const { sorted } = this.state;
     const sortedData = this.getSortedData();
     return (
       <div>
-        <Table multiSelectable onRowSelect={this.handleRowSelect} style={{ marginTop: 10 }}>
-          <TableHead>
-            <TooltipCell tooltip="The total amount of food energy in the given serving size">
-              Dessert (100g serving)
-            </TooltipCell>
-            <TableCell onClick={this.handleSortClick} numeric sorted={sorted}>Calories</TableCell>
+        <Table onRowSelect={this.handleRowSelect} selectable={true} style={{ marginTop: 10 }}>
+          <TableHead displaySelect={false}>
+            <TableCell onClick={this.handleSortClick} sorted={sorted}>Dessert (100g serving)</TableCell>
+            <TableCell numeric>Calories</TableCell>
             <TableCell numeric>Fat (g)</TableCell>
             <TableCell numeric>Sodium (mg)</TableCell>
             <TableCell numeric>Calcium (%)</TableCell>
             <TableCell numeric>Iron (%)</TableCell>
+            <TableCell />
           </TableHead>
           {sortedData.map((item, idx) => (
-            <TableRow key={idx} selected={this.state.selected.indexOf(item.name) !== -1}>
+            <TableRow key={idx} selected={this.state.selected.indexOf(item.id) !== -1}>
               <TableCell>{item.name}</TableCell>
               <TableCell numeric>{item.calories}</TableCell>
               <TableCell numeric>{item.fat}</TableCell>
               <TableCell numeric>{item.sodium}</TableCell>
               <TableCell numeric>{item.calcium}</TableCell>
               <TableCell numeric>{item.iron}</TableCell>
+              <TableCell><Button label="Подробнее" onClick={this.handleToggle} /></TableCell>
             </TableRow>
           ))}
         </Table>
+
+        <Dialog
+          actions={this.actions}
+          active={this.state.active}
+          onEscKeyDown={this.handleToggle}
+          onOverlayClick={this.handleToggle}
+          title="My awesome dialog">
+          <p>Here you can add arbitrary content. Components like Pickers are using dialogs now.</p>
+        </Dialog>
         <br />
         <Navigation>
-          <Button label="Назад" raised primary onClick={() => this.props.tabChange(0)} />
-          <Button label="Далее" raised primary onClick={() => this.props.tabChange(2)} />
+          <Button label="Назад" raised accent onClick={() => this.props.tabChange(0)} />
+          <Button
+            label="Далее"
+            raised
+            primary
+            onClick={() => this.props.tabChange(2)}
+            disabled={this.state.selected.length === 0}
+          />
         </Navigation>
       </div>
     );
