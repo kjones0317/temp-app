@@ -1,27 +1,9 @@
 /* eslint react/prop-types: 0 */
 import React from 'react';
 import { render } from 'react-dom';
-import { AppContainer } from 'react-hot-loader';
+import { Provider } from 'mobx-react';
 import Landing from './Landing';
 
-import Common from '../stores/common';
+import stores from '../stores';
 
-const commonStore = new Common();
-
-render(
-  <AppContainer>
-    <Landing common={commonStore} />
-  </AppContainer>,
-  document.getElementById('app')
-);
-
-if (module.hot) {
-  module.hot.accept('./Landing', () => {
-    render(
-      <AppContainer>
-        <Landing common={commonStore} />
-      </AppContainer>,
-      document.getElementById('app')
-    );
-  });
-}
+render(<Provider {...stores}><Landing /></Provider>, document.getElementById('app'));

@@ -30,25 +30,26 @@ module.exports = {
         loaders: ['babel-loader']
       },
       {
-        // regular css files
-        test: /\.css$/,
-        loader: ExtractTextPlugin.extract({
-          loader: 'css-loader?importLoaders=1'
-        })
+        test: /(\.scss|\.css)$/,
+        loaders: [
+          require.resolve('style-loader'),
+          require.resolve('css-loader') +
+            '?sourceMap&modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
+          require.resolve('sass-loader') + '?sourceMap'
+        ]
       },
       {
-        // sass / scss loader for webpack
-        test: /\.(sass|scss)$/,
-        loader: ExtractTextPlugin.extract(['css-loader', 'sass-loader'])
+        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+        loader: 'url-loader?limit=100000'
       }
     ]
   },
   plugins: [
-    new ExtractTextPlugin({
-      // define where to save the file
-      filename: '[name].css',
-      allChunks: true
-    }),
+    // new ExtractTextPlugin({
+    //   // define where to save the file
+    //   filename: '[name].css',
+    //   allChunks: true
+    // }),
     new LiveReloadPlugin()
   ]
 };
